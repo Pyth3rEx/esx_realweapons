@@ -5,7 +5,7 @@ local Loaded = false
 -----------------------------------------------------------
 Citizen.CreateThread(function()
 	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+		TriggerEvent('efsx:getSharedObject', function(obj) ESX = obj end)
 		Wait(0)
 	end
 
@@ -31,9 +31,9 @@ Citizen.CreateThread(function()
       			end
 
       			if not onPlayer and weaponHash ~= GetSelectedPedWeapon(playerPed) then --Si joueur as...
-	      			SetGear(Config.RealWeapons[i].name) --Ajouter a <array> "RealWeapons"
+	      			SetGear(Config.RealWeapons[i].name)
       			elseif onPlayer and weaponHash == GetSelectedPedWeapon(playerPed) then --Si joueur enlève
-	      			RemoveGear(Config.RealWeapons[i].name) --Effacer de <array> "RealWeapons"
+	      			RemoveGear(Config.RealWeapons[i].name)
       			end
 
     		end
