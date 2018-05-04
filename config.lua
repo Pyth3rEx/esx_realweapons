@@ -36,19 +36,19 @@ Config.RealWeapons = {
 	{name = 'WEAPON_SMG', 				bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = 'w_sb_smg'},
 	{name = 'WEAPON_MG', 				bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = 'w_mg_mg'},
 	{name = 'WEAPON_COMBATMG', 			bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = 'w_mg_combatmg'},
-	{name = 'WEAPON_GUSENBERG', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = 'w_sb_gusenberg'},
+	{name = 'WEAPON_GUSENBERG', 		bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'machine', 	model = 'w_sb_gusenberg'},
 	{name = 'WEAPON_COMBATPDW', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = ''},
 	{name = 'WEAPON_MACHINEPISTOL', 	bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = ''},
-	{name = 'WEAPON_ASSAULTSMG', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = 'w_sb_assaultsmg'},
+	{name = 'WEAPON_ASSAULTSMG', 		bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'machine', 	model = 'w_sb_assaultsmg'},
 	{name = 'WEAPON_MINISMG', 			bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'machine', 	model = ''},
 
 --Armes d'assault
-	{name = 'WEAPON_ASSAULTRIFLE', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'assault', 	model = 'w_ar_assaultrifle'},
-	{name = 'WEAPON_CARBINERIFLE', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'assault', 	model = 'w_ar_carbinerifle'},
-	{name = 'WEAPON_ADVANCEDRIFLE', 	bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'assault', 	model = 'w_ar_advancedrifle'},
-	{name = 'WEAPON_SPECIALCARBINE', 	bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'assault', 	model = 'w_ar_specialcarbine'},
-	{name = 'WEAPON_BULLPUPRIFLE', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'assault', 	model = 'w_ar_bullpuprifle'},
-	{name = 'WEAPON_COMPACTRIFLE', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'assault', 	model = ''},
+	{name = 'WEAPON_ASSAULTRIFLE', 		bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'assault', 	model = 'w_ar_assaultrifle'},
+	{name = 'WEAPON_CARBINERIFLE', 		bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'assault', 	model = 'w_ar_carbinerifle'},
+	{name = 'WEAPON_ADVANCEDRIFLE', 	bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'assault', 	model = 'w_ar_advancedrifle'},
+	{name = 'WEAPON_SPECIALCARBINE', 	bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'assault', 	model = 'w_ar_specialcarbine'},
+	{name = 'WEAPON_BULLPUPRIFLE', 		bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'assault', 	model = 'w_ar_bullpuprifle'},
+	{name = 'WEAPON_COMPACTRIFLE', 		bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'assault', 	model = ''},
 
 --Armes shotgun
 	{name = 'WEAPON_PUMPSHOTGUN', 		bone = 24818, x = 0.1, y = -0.15, z = 0.0, xRot = 0.0, yRot = 135.0, zRot = 0.0, category = 'shotgun', 	model = 'w_sg_pumpshotgun'},
@@ -61,7 +61,7 @@ Config.RealWeapons = {
 	{name = 'WEAPON_AUTOSHOTGUN', 		bone = 24818, x = 0.1, y = 0.15, z = 0.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'shotgun', 	model = ''},
 
 --Armes sniper
-	{name = 'WEAPON_SNIPERRIFLE', 		bone = 24818, x = 65536.0, y = 65536.0, z = 65536.0, xRot = 0.0, yRot = 0.0, zRot = 0.0, category = 'sniper', 	model = 'w_sr_sniperrifle'},
+	{name = 'WEAPON_SNIPERRIFLE', 		bone = 24818, x = 0.09, y = -0.15, z = 0.1, xRot = 10.0, yRot = 160.0, zRot = 10.0, category = 'sniper', 	model = 'w_sr_sniperrifle'},
 	{name = 'WEAPON_HEAVYSNIPER', 		bone = 24818, x = 0.1, y = -0.15, z = 0.0, xRot = 0.0, yRot = 135.0, zRot = 0.0, category = 'sniper', 	model = 'w_sr_heavysniper'},
 	{name = 'WEAPON_MARKSMANRIFLE', 	bone = 24818, x = 0.1, y = -0.15, z = 0.0, xRot = 0.0, yRot = 135.0, zRot = 0.0, category = 'sniper', 	model = 'w_sr_marksmanrifle'},
 

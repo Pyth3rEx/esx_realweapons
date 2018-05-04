@@ -30,9 +30,9 @@ Citizen.CreateThread(function()
       				end
       			end
 
-      			if not onPlayer and weaponHash ~= GetSelectedPedWeapon(playerPed) then --Si joueur as...
+      			if not onPlayer and weaponHash ~= GetSelectedPedWeapon(playerPed) then
 	      			SetGear(Config.RealWeapons[i].name)
-      			elseif onPlayer and weaponHash == GetSelectedPedWeapon(playerPed) then --Si joueur enlève
+      			elseif onPlayer and weaponHash == GetSelectedPedWeapon(playerPed) then
 	      			RemoveGear(Config.RealWeapons[i].name)
       			end
 
