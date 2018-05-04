@@ -37,6 +37,7 @@ end)
 -----------------------------------------------------------
 RegisterNetEvent('removeWeapon')
 AddEventHandler('removeWeapon', function(weaponName)
+    
 	RemoveGear(weaponName)
 end)
 RegisterNetEvent('removeWeapons')
@@ -97,7 +98,7 @@ function DeleteWeapon(object)
   DeleteObject(object)
 end
 -- Add one weapon on the ped
-function SetGear(weapon)
+function SetGear(weaponFromConfig)
 	local bone       = nil
 	local boneX      = 0.0
 	local boneY      = 0.0
@@ -110,7 +111,7 @@ function SetGear(weapon)
 	local playerWeapons = getWeapons()
 
 	for i=1, #Config.RealWeapons, 1 do
-		if Config.RealWeapons[i].name == weapon then
+		if Config.RealWeapons[i].name == weaponFromConfig then
 			bone     = Config.RealWeapons[i].bone
 			boneX    = Config.RealWeapons[i].x
 			boneY    = Config.RealWeapons[i].y
@@ -132,7 +133,10 @@ function SetGear(weapon)
 		local boneIndex = GetPedBoneIndex(playerPed, bone)
 		local bonePos 	= GetWorldPositionOfEntityBone(playerPed, boneIndex)
 		AttachEntityToEntity(obj, playerPed, boneIndex, boneX, boneY, boneZ, boneXRot, boneYRot, boneZRot, false, false, false, false, 2, true)
+      
 		table.insert(Weapons,{weapon = weapon, obj = obj})
+		Weapons[weaponFromConfig] = obj
+		TriggerServerEvent('esx:clientLog', "[SetGear] ATTACHED")
 	end)
 end
 
@@ -309,8 +313,10 @@ function SetGears()
 	local boneZRot   = 0.0
 	local playerPed  = GetPlayerPed(-1)
 	local model      = nil
+
 	local playerWeapons = getWeapons()
 	local weapon 	 = nil
+
 
 	for k,v in pairs(playerWeapons) do
 
@@ -325,7 +331,7 @@ function SetGears()
 				boneYRot = Config.RealWeapons[j].yRot
 				boneZRot = Config.RealWeapons[j].zRot
 				model    = Config.RealWeapons[j].model
-				weapon   = Config.RealWeapons[j].name
+				weaponFromConfig   = Config.RealWeapons[j].name
 
 				break
 
