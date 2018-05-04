@@ -50,20 +50,20 @@ end)
 -----------------------------------------------------------
 -----------------------------------------------------------
 RegisterNetEvent('esx:removeWeapon')
-AddEventHandler('esx:removeWeapon', function(weaponName) --Event: arme enlevée
+AddEventHandler('esx:removeWeapon', function(weaponName)
 	RemoveGear(weaponName)
 end)
 -----------------------------------------------------------
 -----------------------------------------------------------
 -- Remove only one weapon that's on the ped
-function RemoveGear(weapon)
+function RemoveGear(weaponFromConfig)
 	local _Weapons = {}
 
 	for weaponName, entity in pairs(Weapons) do
-		if weaponName ~= weapon then
+		if weaponName ~= weaponFromConfig then
 			_Weapons[weaponName] = entity
-		else
-			ESX.Game.DeleteObject(entity)
+		else --Not triggered by weapon removed?
+			ESX.Game.DeleteObject(entity) --Not working?? Unlikely...
 		end
 	end
 
@@ -83,7 +83,7 @@ end
 -----------------------------------------------------------
 -----------------------------------------------------------
 -- Add one weapon on the ped
-function SetGear(weapon)
+function SetGear(weaponFromConfig)
 	local bone       = nil
 	local boneX      = 0.0
 	local boneY      = 0.0
@@ -98,7 +98,7 @@ function SetGear(weapon)
 
 --Assignations des muscles du mesh "playerPed"
 	for i=1, #Config.RealWeapons, 1 do
-		if Config.RealWeapons[i].name == weapon then
+		if Config.RealWeapons[i].name == weaponFromConfig then
 			bone     = Config.RealWeapons[i].bone
 			boneX    = Config.RealWeapons[i].x
 			boneY    = Config.RealWeapons[i].y
@@ -121,7 +121,7 @@ function SetGear(weapon)
 		local boneIndex = GetPedBoneIndex(playerPed, bone)
 		local bonePos 	= GetWorldPositionOfEntityBone(playerPed, boneIndex)
 		AttachEntityToEntity(obj, playerPed, boneIndex, boneX, boneY, boneZ, boneXRot, boneYRot, boneZRot, false, false, false, false, 2, true)
-		Weapons[weapon] = obj
+		Weapons[weaponFromConfig] = obj
 		TriggerServerEvent('esx:clientLog', "[SetGear] ATTACHED")
 	end)
 	TriggerServerEvent('esx:clientLog', "[SET GEAR] " .. weapon)
@@ -141,7 +141,7 @@ function SetGears()
 	local playerPed  = GetPlayerPed(-1)
 	local model      = nil
 	local playerData = ESX.GetPlayerData()
-	local weapon 	 = nil
+	local weaponFromConfig 	 = nil
 
 	for i=1, #playerData.loadout, 1 do
 
@@ -156,7 +156,7 @@ function SetGears()
 				boneYRot = Config.RealWeapons[j].yRot
 				boneZRot = Config.RealWeapons[j].zRot
 				model    = Config.RealWeapons[j].model
-				weapon   = Config.RealWeapons[j].name
+				weaponFromConfig   = Config.RealWeapons[j].name
 
 				break
 
@@ -177,7 +177,7 @@ function SetGears()
 
 			AttachEntityToEntity(obj, playerPed, boneIndex, boneX, boneY, boneZ, boneXRot, boneYRot, boneZRot, false, false, false, false, 2, true)
 
-			Weapons[weapon] = obj
+			Weapons[weaponFromConfig] = obj
 
 			_wait = false
 
