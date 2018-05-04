@@ -56,19 +56,18 @@ end)
 -----------------------------------------------------------
 -----------------------------------------------------------
 -- Remove only one weapon that's on the ped
-function RemoveGear(weaponFromConfig)
+function RemoveGear(weapon)
 	local _Weapons = {}
 
-	for weaponName, entity in pairs(Weapons) do
-		if weaponName ~= weaponFromConfig then
-			_Weapons[weaponName] = entity
-		else --Not triggered by weapon removed?
-			ESX.Game.DeleteObject(entity) --Not working?? Unlikely...
+	for i, entity in pairs(Weapons) do
+		if entity.weapon ~= weapon then
+			_Weapons[i] = entity
+		else
+			DeleteWeapon(entity.obj)
 		end
 	end
 
 	Weapons = _Weapons
-	TriggerServerEvent('esx:clientLog', "[WEAPON REMOVED] " .. weapon)
 end
 -----------------------------------------------------------
 -----------------------------------------------------------
