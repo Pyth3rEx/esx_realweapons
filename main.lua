@@ -5,7 +5,7 @@ local Loaded = false
 -----------------------------------------------------------
 Citizen.CreateThread(function()
 	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+		TriggerEvent('efsx:getSharedObject', function(obj) ESX = obj end)
 		Wait(0)
 	end
 
@@ -30,10 +30,10 @@ Citizen.CreateThread(function()
       				end
       			end
 
-      			if not onPlayer and weaponHash ~= GetSelectedPedWeapon(playerPed) then --Si joueur as...
-	      			SetGear(Config.RealWeapons[i].name) --Ajouter a <array> "RealWeapons"
-      			elseif onPlayer and weaponHash == GetSelectedPedWeapon(playerPed) then --Si joueur enlève
-	      			RemoveGear(Config.RealWeapons[i].name) --Effacer de <array> "RealWeapons"
+      			if not onPlayer and weaponHash ~= GetSelectedPedWeapon(playerPed) then
+	      			SetGear(Config.RealWeapons[i].name)
+      			elseif onPlayer and weaponHash == GetSelectedPedWeapon(playerPed) then
+	      			RemoveGear(Config.RealWeapons[i].name)
       			end
 
     		end
@@ -50,7 +50,7 @@ end)
 -----------------------------------------------------------
 -----------------------------------------------------------
 RegisterNetEvent('esx:removeWeapon')
-AddEventHandler('esx:removeWeapon', function(weaponName) --Event: arme enlevée
+AddEventHandler('esx:removeWeapon', function(weaponName)
 	RemoveGear(weaponName)
 end)
 -----------------------------------------------------------
@@ -59,16 +59,15 @@ end)
 function RemoveGear(weapon)
 	local _Weapons = {}
 
-	for weaponName, entity in pairs(Weapons) do
-		if weaponName ~= weapon then
-			_Weapons[weaponName] = entity
+	for i, entity in pairs(Weapons) do
+		if entity.weapon ~= weapon then
+			_Weapons[i] = entity
 		else
-			ESX.Game.DeleteObject(entity)
+			DeleteWeapon(entity.obj)
 		end
 	end
 
 	Weapons = _Weapons
-	TriggerServerEvent('esx:clientLog', "[WEAPON REMOVED] " .. weapon)
 end
 -----------------------------------------------------------
 -----------------------------------------------------------
@@ -83,7 +82,7 @@ end
 -----------------------------------------------------------
 -----------------------------------------------------------
 -- Add one weapon on the ped
-function SetGear(weapon)
+function SetGear(weaponFromConfig)
 	local bone       = nil
 	local boneX      = 0.0
 	local boneY      = 0.0
@@ -98,7 +97,7 @@ function SetGear(weapon)
 
 --Assignations des muscles du mesh "playerPed"
 	for i=1, #Config.RealWeapons, 1 do
-		if Config.RealWeapons[i].name == weapon then
+		if Config.RealWeapons[i].name == weaponFromConfig then
 			bone     = Config.RealWeapons[i].bone
 			boneX    = Config.RealWeapons[i].x
 			boneY    = Config.RealWeapons[i].y
@@ -121,7 +120,7 @@ function SetGear(weapon)
 		local boneIndex = GetPedBoneIndex(playerPed, bone)
 		local bonePos 	= GetWorldPositionOfEntityBone(playerPed, boneIndex)
 		AttachEntityToEntity(obj, playerPed, boneIndex, boneX, boneY, boneZ, boneXRot, boneYRot, boneZRot, false, false, false, false, 2, true)
-		Weapons[weapon] = obj
+		Weapons[weaponFromConfig] = obj
 		TriggerServerEvent('esx:clientLog', "[SetGear] ATTACHED")
 	end)
 	TriggerServerEvent('esx:clientLog', "[SET GEAR] " .. weapon)
@@ -141,7 +140,7 @@ function SetGears()
 	local playerPed  = GetPlayerPed(-1)
 	local model      = nil
 	local playerData = ESX.GetPlayerData()
-	local weapon 	 = nil
+	local weaponFromConfig 	 = nil
 
 	for i=1, #playerData.loadout, 1 do
 
@@ -156,7 +155,7 @@ function SetGears()
 				boneYRot = Config.RealWeapons[j].yRot
 				boneZRot = Config.RealWeapons[j].zRot
 				model    = Config.RealWeapons[j].model
-				weapon   = Config.RealWeapons[j].name
+				weaponFromConfig   = Config.RealWeapons[j].name
 
 				break
 
@@ -177,7 +176,7 @@ function SetGears()
 
 			AttachEntityToEntity(obj, playerPed, boneIndex, boneX, boneY, boneZ, boneXRot, boneYRot, boneZRot, false, false, false, false, 2, true)
 
-			Weapons[weapon] = obj
+			Weapons[weaponFromConfig] = obj
 
 			_wait = false
 
