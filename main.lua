@@ -1,20 +1,9 @@
-ESX = nil
 local Weapons = {}
-local Loaded = false
 -----------------------------------------------------------
 -----------------------------------------------------------
 Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('efsx:getSharedObject', function(obj) ESX = obj end)
-		Wait(0)
-	end
-
-	while not Loaded do
-		Wait(250)
-	end
-
 	while true do
-		local playerPed = GetPlayerPed(-1) --Détetion entitée "playerPed"
+		local playerPed = GetPlayerPed(-1)
 
 		for i=1, #Config.RealWeapons, 1 do
 
@@ -23,11 +12,13 @@ Citizen.CreateThread(function()
     		if HasPedGotWeapon(playerPed, weaponHash, false) then
     			local onPlayer = false
 
-				for weaponName, entity in pairs(Weapons) do
-      				if weaponName == Config.RealWeapons[i].name then
+				for k, entity in pairs(Weapons) do
+				  if entity then
+      				if entity.weapon == Config.RealWeapons[i].name then
       					onPlayer = true
       					break
       				end
+				  end
       			end
 
       			if not onPlayer and weaponHash ~= GetSelectedPedWeapon(playerPed) then
@@ -35,23 +26,22 @@ Citizen.CreateThread(function()
       			elseif onPlayer and weaponHash == GetSelectedPedWeapon(playerPed) then
 	      			RemoveGear(Config.RealWeapons[i].name)
       			end
-
+			else
+				RemoveGear(Config.RealWeapons[i].name)
     		end
   		end
-		Wait(500) --Cooldown
+		Wait(500)
 	end
 end)
 -----------------------------------------------------------
 -----------------------------------------------------------
-AddEventHandler('skinchanger:modelLoaded', function()
-	SetGears()
-	Loaded = true
-end)
------------------------------------------------------------
------------------------------------------------------------
-RegisterNetEvent('esx:removeWeapon')
-AddEventHandler('esx:removeWeapon', function(weaponName)
+RegisterNetEvent('removeWeapon')
+AddEventHandler('removeWeapon', function(weaponName)
 	RemoveGear(weaponName)
+end)
+RegisterNetEvent('removeWeapons')
+AddEventHandler('removeWeapons', function()
+	RemoveGears()
 end)
 -----------------------------------------------------------
 -----------------------------------------------------------
@@ -73,16 +63,41 @@ end
 -----------------------------------------------------------
 -- Remove all weapons that are on the ped
 function RemoveGears()
-	for weaponName, entity in pairs(Weapons) do
-		ESX.Game.DeleteObject(entity)
+	for i, entity in pairs(Weapons) do
+		DeleteWeapon(entity.obj)
 	end
 	Weapons = {}
-	TriggerServerEvent('esx:clientLog', "[GEAR REMOVED] ")
 end
 -----------------------------------------------------------
 -----------------------------------------------------------
+function SpawnObject(model, coords, cb)
+
+  local model = (type(model) == 'number' and model or GetHashKey(model))
+
+  Citizen.CreateThread(function()
+
+    RequestModel(model)
+
+    while not HasModelLoaded(model) do
+      Citizen.Wait(0)
+    end
+
+    local obj = CreateObject(model, coords.x, coords.y, coords.z, true, true, true)
+
+    if cb ~= nil then
+      cb(obj)
+    end
+
+  end)
+
+end
+
+function DeleteWeapon(object)
+  SetEntityAsMissionEntity(object,  false,  true)
+  DeleteObject(object)
+end
 -- Add one weapon on the ped
-function SetGear(weaponFromConfig)
+function SetGear(weapon)
 	local bone       = nil
 	local boneX      = 0.0
 	local boneY      = 0.0
@@ -92,12 +107,10 @@ function SetGear(weaponFromConfig)
 	local boneZRot   = 0.0
 	local playerPed  = GetPlayerPed(-1)
 	local model      = nil
-	local playerData = ESX.GetPlayerData()
+	local playerWeapons = getWeapons()
 
-
---Assignations des muscles du mesh "playerPed"
 	for i=1, #Config.RealWeapons, 1 do
-		if Config.RealWeapons[i].name == weaponFromConfig then
+		if Config.RealWeapons[i].name == weapon then
 			bone     = Config.RealWeapons[i].bone
 			boneX    = Config.RealWeapons[i].x
 			boneY    = Config.RealWeapons[i].y
@@ -109,9 +122,8 @@ function SetGear(weaponFromConfig)
 			break
 		end
 	end
---Fin Assignations des muscles du mesh "playerPed"
 
-	ESX.Game.SpawnObject(model, {
+	SpawnObject(model, {
 		x = x,
 		y = y,
 		z = z
@@ -120,11 +132,169 @@ function SetGear(weaponFromConfig)
 		local boneIndex = GetPedBoneIndex(playerPed, bone)
 		local bonePos 	= GetWorldPositionOfEntityBone(playerPed, boneIndex)
 		AttachEntityToEntity(obj, playerPed, boneIndex, boneX, boneY, boneZ, boneXRot, boneYRot, boneZRot, false, false, false, false, 2, true)
-		Weapons[weaponFromConfig] = obj
-		TriggerServerEvent('esx:clientLog', "[SetGear] ATTACHED")
+		table.insert(Weapons,{weapon = weapon, obj = obj})
 	end)
-	TriggerServerEvent('esx:clientLog', "[SET GEAR] " .. weapon)
 end
+
+local weapon_types = {
+  "WEAPON_KNIFE",
+  "WEAPON_STUNGUN",
+  "WEAPON_FLASHLIGHT",
+  "WEAPON_NIGHTSTICK",
+  "WEAPON_HAMMER",
+  "WEAPON_BAT",
+  "WEAPON_GOLFCLUB",
+  "WEAPON_CROWBAR",
+  "WEAPON_PISTOL",
+  "WEAPON_COMBATPISTOL",
+  "WEAPON_APPISTOL",
+  "WEAPON_PISTOL50",
+  "WEAPON_MICROSMG",
+  "WEAPON_SMG",
+  "WEAPON_ASSAULTSMG",
+  "WEAPON_ASSAULTRIFLE",
+  "WEAPON_CARBINERIFLE",
+  "WEAPON_SPECIALCARBINE",
+  "WEAPON_ADVANCEDRIFLE",
+  "WEAPON_MG",
+  "WEAPON_COMBATMG",
+  "WEAPON_PUMPSHOTGUN",
+  "WEAPON_SAWNOFFSHOTGUN",
+  "WEAPON_ASSAULTSHOTGUN",
+  "WEAPON_BULLPUPSHOTGUN",
+  "WEAPON_STUNGUN",
+  "WEAPON_SNIPERRIFLE",
+  "WEAPON_HEAVYSNIPER",
+  "WEAPON_REMOTESNIPER",
+  "WEAPON_GRENADELAUNCHER",
+  "WEAPON_GRENADELAUNCHER_SMOKE",
+  "WEAPON_RPG",
+  "WEAPON_PASSENGER_ROCKET",
+  "WEAPON_AIRSTRIKE_ROCKET",
+  "WEAPON_STINGER",
+  "WEAPON_MINIGUN",
+  "WEAPON_GRENADE",
+  "WEAPON_STICKYBOMB",
+  "WEAPON_SMOKEGRENADE",
+  "WEAPON_BZGAS",
+  "WEAPON_MOLOTOV",
+  "WEAPON_FIREEXTINGUISHER",
+  "WEAPON_PETROLCAN",
+  "WEAPON_DIGISCANNER",
+  "WEAPON_BRIEFCASE",
+  "WEAPON_BRIEFCASE_02",
+  "WEAPON_BALL",
+  "WEAPON_FLARE",
+--"WEAPON_UNARMED",
+  "WEAPON_BOTTLE",
+  "WEAPON_ANIMAL",
+  "WEAPON_KNUCKLE",
+  "WEAPON_SNSPISTOL",
+  "WEAPON_COUGAR",
+  "WEAPON_KNIFE",
+  "WEAPON_NIGHTSTICK",
+  "WEAPON_HAMMER",
+  "WEAPON_BAT",
+  "WEAPON_GOLFCLUB",
+  "WEAPON_CROWBAR",
+  "WEAPON_PISTOL",
+  "WEAPON_COMBATPISTOL",
+  "WEAPON_APPISTOL",
+  "WEAPON_PISTOL50",
+  "WEAPON_MICROSMG",
+  "WEAPON_SMG",
+  "WEAPON_ASSAULTSMG",
+  "WEAPON_ASSAULTRIFLE",
+  "WEAPON_CARBINERIFLE",
+  "WEAPON_ADVANCEDRIFLE",
+  "WEAPON_MG",
+  "WEAPON_COMBATMG",
+  "WEAPON_PUMPSHOTGUN",
+  "WEAPON_SAWNOFFSHOTGUN",
+  "WEAPON_ASSAULTSHOTGUN",
+  "WEAPON_BULLPUPSHOTGUN",
+  "WEAPON_STUNGUN",
+  "WEAPON_SNIPERRIFLE",
+  "WEAPON_HEAVYSNIPER",
+  "WEAPON_REMOTESNIPER",
+  "WEAPON_GRENADELAUNCHER",
+  "WEAPON_GRENADELAUNCHER_SMOKE",
+  "WEAPON_RPG",
+  "WEAPON_PASSENGER_ROCKET",
+  "WEAPON_AIRSTRIKE_ROCKET",
+  "WEAPON_STINGER",
+  "WEAPON_MINIGUN",
+  "WEAPON_GRENADE",
+  "WEAPON_STICKYBOMB",
+  "WEAPON_SMOKEGRENADE",
+  "WEAPON_BZGAS",
+  "WEAPON_MOLOTOV",
+  "WEAPON_FIREEXTINGUISHER",
+  "WEAPON_PETROLCAN",
+  "WEAPON_DIGISCANNER",
+  "WEAPON_BRIEFCASE",
+  "WEAPON_BRIEFCASE_02",
+  "WEAPON_BALL",
+  "WEAPON_FLARE",
+  "WEAPON_VEHICLE_ROCKET",
+  "WEAPON_BARBED_WIRE",
+  "WEAPON_DROWNING",
+  "WEAPON_DROWNING_IN_VEHICLE",
+  "WEAPON_BLEEDING",
+  "WEAPON_ELECTRIC_FENCE",
+  "WEAPON_EXPLOSION",
+  "WEAPON_FALL",
+  "WEAPON_HIT_BY_WATER_CANNON",
+  "WEAPON_RAMMED_BY_CAR",
+  "WEAPON_RUN_OVER_BY_CAR",
+  "WEAPON_HELI_CRASH",
+  "WEAPON_FIRE",
+  "GADGET_NIGHTVISION",
+  "GADGET_PARACHUTE",
+  "WEAPON_HEAVYSHOTGUN",
+  "WEAPON_MARKSMANRIFLE",
+  "WEAPON_HOMINGLAUNCHER",
+  "WEAPON_PROXMINE",
+  "WEAPON_SNOWBALL",
+  "WEAPON_FLAREGUN",
+  "WEAPON_GARBAGEBAG",
+  "WEAPON_HANDCUFFS",
+  "WEAPON_COMBATPDW",
+  "WEAPON_MARKSMANPISTOL",
+  "WEAPON_HATCHET",
+  "WEAPON_RAILGUN",
+  "WEAPON_MACHETE",
+  "WEAPON_MACHINEPISTOL",
+  "WEAPON_AIR_DEFENCE_GUN",
+  "WEAPON_SWITCHBLADE",
+  "WEAPON_REVOLVER"
+}
+
+function getWeapons()
+  local player = GetPlayerPed(-1)
+
+  local ammo_types = {} -- remember ammo type to not duplicate ammo amount
+
+  local weapons = {}
+  for k,v in pairs(weapon_types) do
+    local hash = GetHashKey(v)
+    if HasPedGotWeapon(player,hash) then
+      local weapon = {}
+      weapons[v] = weapon
+
+      local atype = Citizen.InvokeNative(0x7FEAD38B326B9F74, player, hash)
+      if ammo_types[atype] == nil then
+        ammo_types[atype] = true
+        weapon.ammo = GetAmmoInPedWeapon(player,hash)
+      else
+        weapon.ammo = 0
+      end
+    end
+  end
+
+  return weapons
+end
+
 -----------------------------------------------------------
 -----------------------------------------------------------
 -- Add all the weapons in the xPlayer's loadout
@@ -139,13 +309,13 @@ function SetGears()
 	local boneZRot   = 0.0
 	local playerPed  = GetPlayerPed(-1)
 	local model      = nil
-	local playerData = ESX.GetPlayerData()
-	local weaponFromConfig 	 = nil
+	local playerWeapons = getWeapons()
+	local weapon 	 = nil
 
-	for i=1, #playerData.loadout, 1 do
+	for k,v in pairs(playerWeapons) do
 
 		for j=1, #Config.RealWeapons, 1 do
-			if Config.RealWeapons[j].name == playerData.loadout[i].name then
+			if Config.RealWeapons[j].name == k then
 
 				bone     = Config.RealWeapons[j].bone
 				boneX    = Config.RealWeapons[j].x
@@ -155,7 +325,7 @@ function SetGears()
 				boneYRot = Config.RealWeapons[j].yRot
 				boneZRot = Config.RealWeapons[j].zRot
 				model    = Config.RealWeapons[j].model
-				weaponFromConfig   = Config.RealWeapons[j].name
+				weapon   = Config.RealWeapons[j].name
 
 				break
 
@@ -164,7 +334,7 @@ function SetGears()
 
 		local _wait = true
 
-		ESX.Game.SpawnObject(model, {
+		SpawnObject(model, {
 			x = x,
 			y = y,
 			z = z
@@ -176,7 +346,7 @@ function SetGears()
 
 			AttachEntityToEntity(obj, playerPed, boneIndex, boneX, boneY, boneZ, boneXRot, boneYRot, boneZRot, false, false, false, false, 2, true)
 
-			Weapons[weaponFromConfig] = obj
+			table.insert(Weapons,{weapon = weapon, obj = obj})
 
 			_wait = false
 
